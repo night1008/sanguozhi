@@ -13,7 +13,6 @@ def parse_all():
 
             p = re.compile(r'\w，?\s*字\w{2}')
             result = p.findall(res)
-            print(result)
             result = [r for r in result if not r.startswith('小字')]
             results += result
     return results
@@ -45,10 +44,9 @@ def read_first_names():
 if __name__ == '__main__':
     from bs4 import BeautifulSoup
     import jieba
-    import json
     first_names = read_first_names()
 
-    a = []
+    names = []
     for page in range(1, 2):
         content, results = parse_page(page)
         soup = BeautifulSoup(content, "html.parser")
@@ -56,46 +54,33 @@ if __name__ == '__main__':
         text = text.replace('\n', '')
         print('{:-^30}'.format(page))
         cuts = jieba.cut(text)
-        with open('a.json', 'w') as f:
-            bb = list(cuts)
-            f.write(json.dumps(bb, indent=4))
 
         for result in results:
             index = text.index(result)
-            p = re.compile(r'.\w' + result[0])
-            names = p.findall(text, index - 300, index + 1)
+            pattern = re.compile(r'.\w' + result[0])
+            possible_names = pattern.findall(text, index - 300, index + 1)
             result = result.replace('，', '')
-            b = result.split('字')
-            b.insert(0, None)
-            print(names)
-            for index, name in enumerate(names):
-                print(name)
-                if name[:-1] in first_names:
+            result_name = result.split('字')
+            result_name.insert(0, None)
+            print(possible_names)
+            for index, possible_name in enumerate(possible_names):
+                print(possible_name)
+                if possible_name[:-1] in first_names:
                     continue
-                if name[1] in first_names:
-                    names[index] = name[1:]
+                if possible_name[1] in first_names:
+                    possible_names[index] = possible_name[1:]
                     continue
-                names.remove(name)
-            names = list(set(names))
-            if len(names) == 1:
-                b[0] = names[0][0]
-                # print(names[0])
-            else:
-                for b1 in bb:
-                    if len(b1) > 1 and b1.endswith(b[1]):
-                        print(b1)
-                # for first_name in first_names:
-                #     name = first_name + b[1]
-                #     p = re.compile(name)
-                #     r = p.findall(content)
-                #     if r:
-                #         print(r)
-            print(b)
-            a.append(b)
+                possible_names.remove(possible_name)
+            possible_names = list(set(possible_names))
+            if len(possible_names) == 1:
+                result_name[0] = possible_names[0][0]
+                print(result_name[0])
+            print(result_name)
+            names.append(result_name)
 
-    q = [i for i in a if i[0]]
-    print(len(q))   # 513
-    print(len(a))   # 903
+    print(len(names))   # 513
+    names = [name for name in names if name[0]]
+    print(len(names))   # 903
 
     # 父子弟兄
     # 复姓
