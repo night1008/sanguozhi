@@ -1,6 +1,9 @@
 import random
 import requests
 import time
+import os
+
+base_dir = os.path.dirname(os.path.realpath('__file__'))
 
 
 def download(start_page=1, end_page=65):
@@ -18,7 +21,8 @@ def download(start_page=1, end_page=65):
         r.raise_for_status()
         r.encoding = "utf-8"
 
-        with open('{}.htm'.format(page), 'w') as f:
+        path = os.path.join(base_dir, 'contents/{}.htm'.format(page))
+        with open(path, 'w') as f:
             f.write(r.text)
 
         time.sleep(random.randint(2, 4))

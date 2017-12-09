@@ -1,12 +1,14 @@
 import re
+import os
+
+base_dir = os.path.dirname(os.path.realpath('__file__'))
 
 
 def parse_all():
     results = []
     for page in range(1, 66):
-        page = '{:0>3}'.format(page)
-
-        with open('{0}.htm'.format(page), 'r') as f:
+        path = os.path.join(base_dir, 'contents/{:0>3}.htm'.format(page))
+        with open(path, 'r') as f:
             res = f.read()
 
             p = re.compile(r'\w，?\s*字\w{2}')
@@ -18,9 +20,8 @@ def parse_all():
 
 
 def parse_page(page):
-    page = '{:0>3}'.format(page)
-
-    with open('{0}.htm'.format(page), 'r') as f:
+    path = os.path.join(base_dir, 'contents/{:0>3}.htm'.format(page))
+    with open(path, 'r') as f:
         content = f.read()
 
         p = re.compile(r'\w，?\s*字\w{2}\W')
